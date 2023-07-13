@@ -44,51 +44,19 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: blackhole; Type: TABLE; Schema: public; Owner: freecodecamp
---
-
-CREATE TABLE public.blackhole (
-    blackhole_id integer NOT NULL,
-    gravity integer,
-    galaxy_id integer,
-    wormhole boolean DEFAULT false NOT NULL
-);
-
-
-ALTER TABLE public.blackhole OWNER TO freecodecamp;
-
---
--- Name: blackhole_blackhole_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
---
-
-CREATE SEQUENCE public.blackhole_blackhole_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.blackhole_blackhole_id_seq OWNER TO freecodecamp;
-
---
--- Name: blackhole_blackhole_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
---
-
-ALTER SEQUENCE public.blackhole_blackhole_id_seq OWNED BY public.blackhole.blackhole_id;
-
-
---
 -- Name: galaxy; Type: TABLE; Schema: public; Owner: freecodecamp
 --
 
 CREATE TABLE public.galaxy (
     galaxy_id integer NOT NULL,
-    speed integer,
-    description text,
-    name character varying(255) NOT NULL,
-    rotation_speed integer DEFAULT 100000 NOT NULL
+    star_id integer NOT NULL,
+    name character varying(20) NOT NULL,
+    area integer,
+    volume integer,
+    age numeric,
+    material text,
+    has_life boolean,
+    has_water boolean
 );
 
 
@@ -122,10 +90,14 @@ ALTER SEQUENCE public.galaxy_galaxy_id_seq OWNED BY public.galaxy.galaxy_id;
 
 CREATE TABLE public.moon (
     moon_id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    has_water boolean NOT NULL,
     planet_id integer NOT NULL,
-    name_code character varying(255)
+    name character varying(20) NOT NULL,
+    area integer,
+    volume integer,
+    age numeric,
+    material text,
+    has_life boolean,
+    has_water boolean
 );
 
 
@@ -154,25 +126,24 @@ ALTER SEQUENCE public.moon_moon_id_seq OWNED BY public.moon.moon_id;
 
 
 --
--- Name: planet; Type: TABLE; Schema: public; Owner: freecodecamp
+-- Name: more_info; Type: TABLE; Schema: public; Owner: freecodecamp
 --
 
-CREATE TABLE public.planet (
-    planet_id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    amount_of_people numeric,
-    time_travel boolean DEFAULT false NOT NULL,
-    star_id integer NOT NULL
+CREATE TABLE public.more_info (
+    more_info_id integer NOT NULL,
+    object_id integer,
+    name character varying(20) NOT NULL,
+    description text
 );
 
 
-ALTER TABLE public.planet OWNER TO freecodecamp;
+ALTER TABLE public.more_info OWNER TO freecodecamp;
 
 --
--- Name: planet_lanet_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
+-- Name: more_info_more_info_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
 --
 
-CREATE SEQUENCE public.planet_lanet_id_seq
+CREATE SEQUENCE public.more_info_more_info_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -181,13 +152,55 @@ CREATE SEQUENCE public.planet_lanet_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.planet_lanet_id_seq OWNER TO freecodecamp;
+ALTER TABLE public.more_info_more_info_id_seq OWNER TO freecodecamp;
 
 --
--- Name: planet_lanet_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
+-- Name: more_info_more_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
 --
 
-ALTER SEQUENCE public.planet_lanet_id_seq OWNED BY public.planet.planet_id;
+ALTER SEQUENCE public.more_info_more_info_id_seq OWNED BY public.more_info.more_info_id;
+
+
+--
+-- Name: planet; Type: TABLE; Schema: public; Owner: freecodecamp
+--
+
+CREATE TABLE public.planet (
+    planet_id integer NOT NULL,
+    star_id integer NOT NULL,
+    moon_id integer NOT NULL,
+    name character varying(20) NOT NULL,
+    area integer,
+    volume integer,
+    age numeric,
+    material text,
+    has_life boolean,
+    has_water boolean
+);
+
+
+ALTER TABLE public.planet OWNER TO freecodecamp;
+
+--
+-- Name: planet_planet_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
+--
+
+CREATE SEQUENCE public.planet_planet_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.planet_planet_id_seq OWNER TO freecodecamp;
+
+--
+-- Name: planet_planet_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
+--
+
+ALTER SEQUENCE public.planet_planet_id_seq OWNED BY public.planet.planet_id;
 
 
 --
@@ -196,10 +209,15 @@ ALTER SEQUENCE public.planet_lanet_id_seq OWNED BY public.planet.planet_id;
 
 CREATE TABLE public.star (
     star_id integer NOT NULL,
-    radius integer NOT NULL,
-    color character varying(255),
-    name character varying(255) NOT NULL,
-    galaxy_id integer
+    galaxy_id integer NOT NULL,
+    planet_id integer NOT NULL,
+    name character varying(20) NOT NULL,
+    area integer,
+    volume integer,
+    age numeric,
+    material text,
+    has_life boolean,
+    has_water boolean
 );
 
 
@@ -228,13 +246,6 @@ ALTER SEQUENCE public.star_star_id_seq OWNED BY public.star.star_id;
 
 
 --
--- Name: blackhole blackhole_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
---
-
-ALTER TABLE ONLY public.blackhole ALTER COLUMN blackhole_id SET DEFAULT nextval('public.blackhole_blackhole_id_seq'::regclass);
-
-
---
 -- Name: galaxy galaxy_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
 --
 
@@ -249,10 +260,17 @@ ALTER TABLE ONLY public.moon ALTER COLUMN moon_id SET DEFAULT nextval('public.mo
 
 
 --
+-- Name: more_info more_info_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.more_info ALTER COLUMN more_info_id SET DEFAULT nextval('public.more_info_more_info_id_seq'::regclass);
+
+
+--
 -- Name: planet planet_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
 --
 
-ALTER TABLE ONLY public.planet ALTER COLUMN planet_id SET DEFAULT nextval('public.planet_lanet_id_seq'::regclass);
+ALTER TABLE ONLY public.planet ALTER COLUMN planet_id SET DEFAULT nextval('public.planet_planet_id_seq'::regclass);
 
 
 --
@@ -263,121 +281,125 @@ ALTER TABLE ONLY public.star ALTER COLUMN star_id SET DEFAULT nextval('public.st
 
 
 --
--- Data for Name: blackhole; Type: TABLE DATA; Schema: public; Owner: freecodecamp
---
-
-
-
---
 -- Data for Name: galaxy; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.galaxy VALUES (1, NULL, NULL, 'andromeda', 100000);
-INSERT INTO public.galaxy VALUES (2, NULL, NULL, 'galaxy2', 100000);
-INSERT INTO public.galaxy VALUES (3, NULL, NULL, 'galaxy3', 100000);
-INSERT INTO public.galaxy VALUES (4, NULL, NULL, 'galaxy4', 100000);
-INSERT INTO public.galaxy VALUES (5, NULL, NULL, 'galaxy5', 100000);
-INSERT INTO public.galaxy VALUES (6, NULL, NULL, 'galaxy6', 100000);
+INSERT INTO public.galaxy VALUES (1, 1, 'galaxy1', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.galaxy VALUES (2, 2, 'galaxy2', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.galaxy VALUES (3, 3, 'galaxy3', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.galaxy VALUES (4, 4, 'galaxy4', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.galaxy VALUES (5, 5, 'galaxy5', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.galaxy VALUES (6, 6, 'galaxy6', 500, 750, 1500.75, 'solid', true, true);
 
 
 --
 -- Data for Name: moon; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.moon VALUES (1, 'moon1', true, 2, 'moon1');
-INSERT INTO public.moon VALUES (2, 'moon2', true, 3, 'moon2');
-INSERT INTO public.moon VALUES (3, 'moon3', true, 4, 'moon3');
-INSERT INTO public.moon VALUES (4, 'moon3', true, 4, 'moon4');
-INSERT INTO public.moon VALUES (5, 'moon3', true, 4, 'moon5');
-INSERT INTO public.moon VALUES (6, 'moon3', true, 4, 'moon6');
-INSERT INTO public.moon VALUES (7, 'moon3', true, 4, 'moon7');
-INSERT INTO public.moon VALUES (8, 'moon3', true, 4, 'moon8');
-INSERT INTO public.moon VALUES (9, 'moon3', true, 4, 'moon9');
-INSERT INTO public.moon VALUES (10, 'moon3', true, 4, 'moon10');
-INSERT INTO public.moon VALUES (11, 'moon3', true, 4, 'moon11');
-INSERT INTO public.moon VALUES (12, 'moon3', true, 4, 'moon12');
-INSERT INTO public.moon VALUES (13, 'moon3', true, 4, 'moon13');
-INSERT INTO public.moon VALUES (14, 'moon3', true, 4, 'moon14');
-INSERT INTO public.moon VALUES (15, 'moon3', true, 4, 'moon15');
-INSERT INTO public.moon VALUES (16, 'moon3', true, 4, 'moon16');
-INSERT INTO public.moon VALUES (17, 'moon3', true, 4, 'moon17');
-INSERT INTO public.moon VALUES (18, 'moon3', true, 4, 'moon18');
-INSERT INTO public.moon VALUES (19, 'moon3', true, 4, 'moon19');
-INSERT INTO public.moon VALUES (20, 'moon3', true, 4, 'moon20');
+INSERT INTO public.moon VALUES (1, 1, 'moon1', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (2, 2, 'moon2', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (3, 3, 'moon3', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (4, 4, 'moon4', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (5, 5, 'moon5', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (6, 6, 'moon6', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (7, 7, 'moon7', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (8, 8, 'moon8', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (9, 9, 'moon9', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (10, 10, 'moon10', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (11, 11, 'moon11', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (12, 11, 'moon12', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (13, 11, 'moon13', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (14, 11, 'moon14', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (15, 11, 'moon15', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (16, 11, 'moon16', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (17, 11, 'moon17', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (18, 11, 'moon18', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (19, 11, 'moon19', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.moon VALUES (20, 11, 'moon20', 500, 750, 1500.75, 'solid', true, true);
+
+
+--
+-- Data for Name: more_info; Type: TABLE DATA; Schema: public; Owner: freecodecamp
+--
+
+INSERT INTO public.more_info VALUES (1, 1, 'info1', 'lorem epsum');
+INSERT INTO public.more_info VALUES (2, 2, 'info2', 'lorem epsum');
+INSERT INTO public.more_info VALUES (3, 3, 'info3', 'lorem epsum');
+INSERT INTO public.more_info VALUES (4, 4, 'info4', 'lorem epsum');
+INSERT INTO public.more_info VALUES (5, 5, 'info5', 'lorem epsum');
 
 
 --
 -- Data for Name: planet; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.planet VALUES (1, 'earth', NULL, false, 1);
-INSERT INTO public.planet VALUES (2, 'mars', NULL, false, 1);
-INSERT INTO public.planet VALUES (3, 'neptune', NULL, false, 1);
-INSERT INTO public.planet VALUES (4, 'jupiter', NULL, false, 1);
-INSERT INTO public.planet VALUES (5, 'uranus', NULL, false, 1);
-INSERT INTO public.planet VALUES (6, 'venus', NULL, false, 1);
-INSERT INTO public.planet VALUES (7, 'mercury', NULL, false, 1);
-INSERT INTO public.planet VALUES (8, 'saturn', NULL, false, 1);
-INSERT INTO public.planet VALUES (9, 'pluto', NULL, false, 1);
-INSERT INTO public.planet VALUES (10, 'yolo', NULL, false, 1);
-INSERT INTO public.planet VALUES (11, 'jalala', NULL, false, 2);
-INSERT INTO public.planet VALUES (12, 'malala', NULL, false, 2);
-INSERT INTO public.planet VALUES (13, 'kento', NULL, false, 3);
+INSERT INTO public.planet VALUES (1, 1, 1, 'planet1', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (2, 2, 2, 'planet2', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (3, 3, 3, 'planet3', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (4, 4, 4, 'planet4', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (5, 5, 5, 'planet5', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (6, 6, 6, 'planet6', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (7, 6, 7, 'planet7', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (8, 6, 8, 'planet8', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (9, 6, 9, 'planet9', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (10, 6, 10, 'planet10', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (11, 6, 11, 'planet11', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.planet VALUES (12, 6, 12, 'planet12', 500, 750, 1500.75, 'solid', true, true);
 
 
 --
 -- Data for Name: star; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.star VALUES (1, 12345655, 'red', 'beatle', 1);
-INSERT INTO public.star VALUES (2, 12345655, 'yellow', 'joe', 1);
-INSERT INTO public.star VALUES (3, 12345655, 'yellow', 'gary', 1);
-INSERT INTO public.star VALUES (4, 12345655, 'yellow', 'big Yellow', 1);
-INSERT INTO public.star VALUES (5, 12345655, 'orange', 'small orange', 1);
-INSERT INTO public.star VALUES (6, 12345655, 'orange', 'star in galaxy2', 2);
-
-
---
--- Name: blackhole_blackhole_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
---
-
-SELECT pg_catalog.setval('public.blackhole_blackhole_id_seq', 1, false);
+INSERT INTO public.star VALUES (1, 1, 1, 'star1', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.star VALUES (2, 2, 2, 'star2', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.star VALUES (3, 3, 3, 'star3', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.star VALUES (4, 4, 4, 'star4', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.star VALUES (5, 5, 5, 'star5', 500, 750, 1500.75, 'solid', true, true);
+INSERT INTO public.star VALUES (6, 6, 6, 'star6', 500, 750, 1500.75, 'solid', true, true);
 
 
 --
 -- Name: galaxy_galaxy_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.galaxy_galaxy_id_seq', 6, true);
+SELECT pg_catalog.setval('public.galaxy_galaxy_id_seq', 1, false);
 
 
 --
 -- Name: moon_moon_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.moon_moon_id_seq', 20, true);
+SELECT pg_catalog.setval('public.moon_moon_id_seq', 1, false);
 
 
 --
--- Name: planet_lanet_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
+-- Name: more_info_more_info_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.planet_lanet_id_seq', 13, true);
+SELECT pg_catalog.setval('public.more_info_more_info_id_seq', 1, false);
+
+
+--
+-- Name: planet_planet_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
+--
+
+SELECT pg_catalog.setval('public.planet_planet_id_seq', 1, false);
 
 
 --
 -- Name: star_star_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.star_star_id_seq', 6, true);
+SELECT pg_catalog.setval('public.star_star_id_seq', 1, false);
 
 
 --
--- Name: blackhole blackhole_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: galaxy galaxy_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
-ALTER TABLE ONLY public.blackhole
-    ADD CONSTRAINT blackhole_pkey PRIMARY KEY (blackhole_id);
+ALTER TABLE ONLY public.galaxy
+    ADD CONSTRAINT galaxy_name_key UNIQUE (name);
 
 
 --
@@ -389,11 +411,43 @@ ALTER TABLE ONLY public.galaxy
 
 
 --
+-- Name: moon moon_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.moon
+    ADD CONSTRAINT moon_name_key UNIQUE (name);
+
+
+--
 -- Name: moon moon_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.moon
     ADD CONSTRAINT moon_pkey PRIMARY KEY (moon_id);
+
+
+--
+-- Name: more_info more_info_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.more_info
+    ADD CONSTRAINT more_info_name_key UNIQUE (name);
+
+
+--
+-- Name: more_info more_info_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.more_info
+    ADD CONSTRAINT more_info_pkey PRIMARY KEY (more_info_id);
+
+
+--
+-- Name: planet planet_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.planet
+    ADD CONSTRAINT planet_name_key UNIQUE (name);
 
 
 --
@@ -405,6 +459,14 @@ ALTER TABLE ONLY public.planet
 
 
 --
+-- Name: star star_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.star
+    ADD CONSTRAINT star_name_key UNIQUE (name);
+
+
+--
 -- Name: star star_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
@@ -413,27 +475,51 @@ ALTER TABLE ONLY public.star
 
 
 --
--- Name: star fk_galaxy; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: galaxy galaxy_star_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
-ALTER TABLE ONLY public.star
-    ADD CONSTRAINT fk_galaxy FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
+ALTER TABLE ONLY public.galaxy
+    ADD CONSTRAINT galaxy_star_id_fkey FOREIGN KEY (star_id) REFERENCES public.star(star_id);
 
 
 --
--- Name: moon fk_planet; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: moon moon_planet_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.moon
-    ADD CONSTRAINT fk_planet FOREIGN KEY (planet_id) REFERENCES public.planet(planet_id);
+    ADD CONSTRAINT moon_planet_id_fkey FOREIGN KEY (planet_id) REFERENCES public.planet(planet_id);
 
 
 --
--- Name: planet fk_star; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+-- Name: planet planet_moon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
 --
 
 ALTER TABLE ONLY public.planet
-    ADD CONSTRAINT fk_star FOREIGN KEY (star_id) REFERENCES public.star(star_id);
+    ADD CONSTRAINT planet_moon_id_fkey FOREIGN KEY (moon_id) REFERENCES public.moon(moon_id);
+
+
+--
+-- Name: planet planet_star_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.planet
+    ADD CONSTRAINT planet_star_id_fkey FOREIGN KEY (star_id) REFERENCES public.star(star_id);
+
+
+--
+-- Name: star star_galaxy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.star
+    ADD CONSTRAINT star_galaxy_id_fkey FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
+
+
+--
+-- Name: star star_planet_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.star
+    ADD CONSTRAINT star_planet_id_fkey FOREIGN KEY (planet_id) REFERENCES public.planet(planet_id);
 
 
 --
